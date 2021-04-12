@@ -9,8 +9,11 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+import os
 
+from decouple import config
 from pathlib import Path
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -20,10 +23,14 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # See https://docs.djangoproject.com/en/3.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = 'django-insecure-x31-kaqi+!s0%%x3btymlzah6d8etw1a+)d^i)14bw1s#i-f)l'
+SECRET_KEY = config(
+    "SECRET_KEY",
+    default='django-insecure-x31-kaqi+!s0%%x3btymlzah6d8etw1a+)d^i)14bw1s#i-f)l',
+    cast=str
+)
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config("DEBUG", default=True, cast=bool)
 
 ALLOWED_HOSTS = []
 
@@ -37,19 +44,30 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # installed apps
+    'rest_framework',
+    'rest_framework.authtoken',  # Для входа и получения достап к апи
+    'corsheaders',
+
+    'dj_rest_auth',  # Для add log in, log out, and password reset API
+    'dj_rest_auth.registration',
+    'drf_yasg',  # swagger settings
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
+    'corsheaders.middleware.CorsPostCsrfMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'cleaning_service.urls'
+ROOT_URLCONF = 'backend.config.urls'
 
 TEMPLATES = [
     {
@@ -68,7 +86,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'cleaning_service.wsgi.application'
+WSGI_APPLICATION = 'backend.config.wsgi.application'
 
 
 # Database
@@ -76,10 +94,15 @@ WSGI_APPLICATION = 'cleaning_service.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql_psycopg2',
+        'NAME': config('POSTGRES_DB', default="cleaning", cast=str),
+        'PASSWORD': config('POSTGRES_PASSWORD', default="cleaning123", cast=str),
+        'USER': config('POSTGRES_USER', default="cleaning_user", cast=str),
+        'HOST': config('POSTGRES_HOST', default="127.0.0.1", cast=str),
+        'PORT': config('POSTGRES_PORT', default=5432, cast=int),
     }
 }
+
 
 
 # Password validation
@@ -100,6 +123,34 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+BASE_URL = config("BASE_URL", default="http://127.0.0.1:8000")
+STATIC_URL = '/static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_URL = '/media/'
+
+
+# Настройка REST API
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
+    ],
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        # 'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.TokenAuthentication',
+        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
+        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+    ],
+}
+
+CORS_ORIGIN_ALLOW_ALL = False
+
+CORS_ALLOWED_ORIGINS = (
+       'http://localhost:3000',
+       "http://127.0.0.1:3000",
+       'http://localhost:8000',
+       "http://127.0.0.1:8000",
+)
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
