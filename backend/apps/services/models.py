@@ -32,3 +32,11 @@ class Locality(models.Model):
     district = models.ForeignKey(
         District, verbose_name="Район", on_delete=models.PROTECT
     )
+
+    class Meta:
+        verbose_name = "Населенный пункт"
+        verbose_name_plural = "Населенные пункты"
+
+    def __str__(self):
+        return f"{self.name}"
+

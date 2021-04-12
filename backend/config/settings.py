@@ -44,7 +44,11 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django.contrib.sites',
 
+    'allauth',
+    'allauth.account',
+    'allauth.socialaccount',
     # installed apps
     'rest_framework',
     'rest_framework.authtoken',  # Для входа и получения достап к апи
@@ -53,7 +57,14 @@ INSTALLED_APPS = [
     'dj_rest_auth',  # Для add log in, log out, and password reset API
     'dj_rest_auth.registration',
     'drf_yasg',  # swagger settings
+
+
+    "backend.apps.services",
+    "backend.apps.accounts",
+    "backend.apps.api",
 ]
+
+SITE_ID = 1
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -67,7 +78,10 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
+
 ROOT_URLCONF = 'backend.config.urls'
+
+AUTH_USER_MODEL = 'accounts.CompanyUser'
 
 TEMPLATES = [
     {
@@ -87,6 +101,14 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'backend.config.wsgi.application'
+
+REST_AUTH_REGISTER_SERIALIZERS = {
+    'REGISTER_SERIALIZER': 'backend.apps.accounts.serializers.CustomUserSerializer'
+}
+REST_AUTH_SERIALIZERS = {
+    'USER_DETAILS_SERIALIZER': 'backend.apps.accounts.serializers.CustomUserDetailsSerializer',
+}
+
 
 
 # Database
@@ -121,6 +143,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
     },
+    {
+        "NAME": "backend.apps.accounts.validators.UppercaseValidator"
+    }
 ]
 
 BASE_URL = config("BASE_URL", default="http://127.0.0.1:8000")
@@ -128,6 +153,8 @@ STATIC_URL = '/static/'
 STATIC_ROOT = os.path.join(BASE_DIR, "static")
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 MEDIA_URL = '/media/'
+REST_USE_JWT = True
+JWT_AUTH_COOKIE = 'cleaning-auth'
 
 
 # Настройка REST API
@@ -138,10 +165,15 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.SessionAuthentication',
         'rest_framework.authentication.TokenAuthentication',
-        'oauth2_provider.contrib.rest_framework.OAuth2Authentication',
-        'rest_framework_social_oauth2.authentication.SocialAuthentication',
+        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
 }
+
+
+AUTHENTICATION_BACKENDS = [
+    'allauth.account.auth_backends.AuthenticationBackend',
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 CORS_ORIGIN_ALLOW_ALL = False
 
@@ -151,6 +183,20 @@ CORS_ALLOWED_ORIGINS = (
        'http://localhost:8000',
        "http://127.0.0.1:8000",
 )
+
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
+ACCOUNT_UNIQUE_EMAIL = True
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+
+EMAIL_USE_TLS = True
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'test_cleaning12@gmail.com'
+EMAIL_HOST_PASSWORD = 'sultan1999'
+EMAIL_PORT = 587
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.2/topics/i18n/
@@ -168,8 +214,6 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.2/howto/static-files/
-
-STATIC_URL = '/static/'
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/3.2/ref/settings/#default-auto-field
