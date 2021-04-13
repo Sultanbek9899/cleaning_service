@@ -2,28 +2,6 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Create your models here.
-from backend.apps.services.models import Locality
-
-
-class Employee(models.Model):
-    WORK_STATUS_BUSY = 'busy'
-    WORK_STATUS_VACANT = 'vacant'
-    WORK_STATUS_FREE_DAY = 'free_day'
-
-    full_name = models.CharField("Ф.И.О", max_length=255, )
-    photo = models.ImageField("Фото сотрудника", upload_to="employees_photos", null=True, blank=True)
-    work_status = models.CharField("Статус сотрудника", max_length=10)
-    age = models.PositiveSmallIntegerField("Возраст", null=True, blank=True)
-    created = models.DateTimeField(auto_now_add=True)
-    updated = models.DateTimeField(auto_now=True)
-
-    class Meta:
-        ordering = ['-created']
-        verbose_name = "Сотрудник"
-        verbose_name_plural = "Сотрудники"
-
-    def __str__(self):
-        return f'{self.full_name}'
 
 
 class UserManager(BaseUserManager):
@@ -51,9 +29,8 @@ class CompanyUser(AbstractUser):
     logo = models.ImageField(verbose_name="Лого", upload_to='company_logo/', null=True, blank=True)
     phone_number = models.CharField(
         "Номер телефона", max_length=10, null=True)
-    employees = models.ManyToManyField(Employee, verbose_name="Сотрудники")
     activity_localities = models.ManyToManyField(
-        Locality,
+        "services.Locality",
         verbose_name="Населенные пункты деятельности",
 
     )
@@ -77,3 +54,34 @@ class CompanyUser(AbstractUser):
     def __str__(self):
         return f'{self.company_name}'
 
+
+class Employee(models.Model):
+    WORK_STATUS_BUSY = 'busy'
+    WORK_STATUS_VACANT = 'vacant'
+    WORK_STATUS_FREE_DAY = 'free_day'
+    WORK_STATUS_CHOICES = (
+        (WORK_STATUS_BUSY, "Занят"),
+        (WORK_STATUS_FREE_DAY, "Выходной"),
+        (WORK_STATUS_VACANT, "Свободен"),
+    )
+    full_name = models.CharField("Ф.И.О", max_length=255, )
+    photo = models.ImageField("Фото сотрудника", upload_to="employees_photos", null=True, blank=True)
+    work_status = models.CharField("Статус сотрудника", max_length=10)
+    age = models.PositiveSmallIntegerField("Возраст", null=True, blank=True)
+    company = models.ForeignKey(
+        CompanyUser,
+        verbose_name="Компания",
+        related_name="employees",
+        on_delete=models.SET_NULL,
+        null=True,
+    )
+    created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        ordering = ['-created']
+        verbose_name = "Сотрудник"
+        verbose_name_plural = "Сотрудники"
+
+    def __str__(self):
+        return f'{self.full_name}'

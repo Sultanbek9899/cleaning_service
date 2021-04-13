@@ -61,10 +61,13 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return user
 
 
-# class CompanyUserDetailSerializer(serializers.ModelSerializer):
-#     class Meta:
-#         model = CompanyUser
-#         fi = [
-#             "first_name",
-#             "last_name",
-#         ]
+class CompanyUserDetailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = CompanyUser
+        fields = [
+            "email",
+            "company_name",
+            "logo",
+            "phone_number",
+            "activity_localities"
+        ]

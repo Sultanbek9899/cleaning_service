@@ -43,7 +43,7 @@ class Locality(models.Model):
 
 
 #Заказ на сервис
-class Order(models.Model):
+class Booking(models.Model):
     company = models.ForeignKey(
         CompanyUser,
         verbose_name="Компания исполнитель",
@@ -56,7 +56,7 @@ class Order(models.Model):
         on_delete=models.SET_NULL,
         null=True
     )
-    email = models.EmailField()
+    email = models.EmailField(verbose_name="Электронная почта")
     phone_number = models.CharField(verbose_name="Номер телефона", max_length=10)
     locality = models.ForeignKey(
         Locality,
@@ -67,7 +67,31 @@ class Order(models.Model):
     address = models.CharField("Улица и Номер дома", max_length=255)
     date = models.DateTimeField(verbose_name="Дата и время бронирования")
 
-
     created = models.DateTimeField(verbose_name="Время создания заказа", auto_now_add=True)
     updated = models.DateTimeField(verbose_name="Время обновления бро", auto_now=True)
 
+    class Meta:
+        verbose_name = "Бронирование"
+        verbose_name_plural = "Бронирования"
+        ordering = ['created']
+
+    def __str__(self):
+        return f"№{self.id} - {self.locality}, {self.address}"
+
+
+# class UniqueBookingToken(models.Model):
+#     booking_id = models.ForeignKey(
+#         Booking,
+#         verbose_name="Уникальный номер бронирования",
+#         on_delete=models.SET_NULL,
+#         null=True
+#     )
+#     token = models.CharField(max_length=150, verbose_name='Токен бронирования')
+#
+#     class Meta:
+#         verbose_name = "Уникальный токен"
+#         verbose_name_plural = "Уникальные токены"
+#         ordering = ['created']
+#
+#     def __str__(self):
+#         return f"№{self.id} - {self.locality}, {self.address}"
