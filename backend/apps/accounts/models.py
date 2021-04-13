@@ -50,7 +50,7 @@ class CompanyUser(AbstractUser):
     company_name = models.CharField("Название", max_length=255, db_index=True)
     logo = models.ImageField(verbose_name="Лого", upload_to='company_logo/', null=True, blank=True)
     phone_number = models.CharField(
-        "Номер телефона", max_length=10, null=True, blank=True)
+        "Номер телефона", max_length=10, null=True)
     employees = models.ManyToManyField(Employee, verbose_name="Сотрудники")
     activity_localities = models.ManyToManyField(
         Locality,

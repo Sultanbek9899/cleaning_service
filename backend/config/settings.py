@@ -103,12 +103,13 @@ TEMPLATES = [
 WSGI_APPLICATION = 'backend.config.wsgi.application'
 
 REST_AUTH_REGISTER_SERIALIZERS = {
-    'REGISTER_SERIALIZER': 'backend.apps.accounts.serializers.CustomUserSerializer'
+    'REGISTER_SERIALIZER': 'backend.apps.accounts.serializers.UserRegisterSerializer'
 }
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'backend.apps.accounts.serializers.CustomUserDetailsSerializer',
+    'USER_DETAILS_SERIALIZER': 'backend.apps.accounts.serializers.UserRegisterSerializer',
+    # 'LOGIN_SERIALIZER': 'path.to.custom.LoginSerializer',
 }
-
+ACCOUNT_ADAPTER = 'backend.apps.accounts.adapter.CustomAccountAdapter'
 
 
 # Database
@@ -194,7 +195,7 @@ ACCOUNT_CONFIRM_EMAIL_ON_GET = True
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
-EMAIL_HOST_USER = 'test_cleaning12@gmail.com'
+EMAIL_HOST_USER = 'test.cleaning12@gmail.com'
 EMAIL_HOST_PASSWORD = 'sultan1999'
 EMAIL_PORT = 587
 
