@@ -3,7 +3,7 @@ from django.contrib.auth.password_validation import validate_password
 from rest_framework import serializers
 from rest_framework.validators import UniqueValidator
 
-from backend.apps.accounts.models import CompanyUser
+from backend.apps.accounts.models import CompanyUser, Employee
 from dj_rest_auth.registration.serializers import RegisterSerializer
 from dj_rest_auth.serializers import UserDetailsSerializer
 
@@ -11,8 +11,6 @@ from django.contrib.auth import authenticate, get_user_model
 from django.contrib.auth.models import update_last_login
 from rest_framework import serializers
 from .validators import phone_validator
-
-
 
 
 class UserRegisterSerializer(serializers.ModelSerializer):
@@ -71,3 +69,9 @@ class CompanyUserDetailSerializer(serializers.ModelSerializer):
             "phone_number",
             "activity_localities"
         ]
+
+
+class EmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        fields = '__all__'

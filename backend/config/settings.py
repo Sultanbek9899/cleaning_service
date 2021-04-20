@@ -123,7 +123,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('POSTGRES_DB', default="cleaning", cast=str),
         'PASSWORD': config('POSTGRES_PASSWORD', default="cleaning123", cast=str),
-        'USER': config('POSTGRES_USER', default="cleaning_user", cast=str),
+            'USER': config('POSTGRES_USER', default="cleaning_user", cast=str),
         'HOST': config('POSTGRES_HOST', default="127.0.0.1", cast=str),
         'PORT': config('POSTGRES_PORT', default=5432, cast=int),
     }
@@ -207,7 +207,7 @@ EMAIL_PORT = 587
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Bishkek'
 
 USE_I18N = True
 

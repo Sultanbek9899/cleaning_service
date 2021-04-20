@@ -48,13 +48,15 @@ class Booking(models.Model):
         CompanyUser,
         verbose_name="Компания исполнитель",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     ) # Исполнитель
     performer_employee = models.ForeignKey(
         Employee,
         verbose_name="Сотрудник исполнитель",
         on_delete=models.SET_NULL,
-        null=True
+        null=True,
+        blank=True
     )
     email = models.EmailField(verbose_name="Электронная почта")
     phone_number = models.CharField(verbose_name="Номер телефона", max_length=10)
@@ -65,7 +67,7 @@ class Booking(models.Model):
         null=True
     )
     address = models.CharField("Улица и Номер дома", max_length=255)
-    date = models.DateTimeField(verbose_name="Дата и время бронирования")
+    time = models.DateTimeField("Дата и время бронирования", null=True)
 
     created = models.DateTimeField(verbose_name="Время создания заказа", auto_now_add=True)
     updated = models.DateTimeField(verbose_name="Время обновления бро", auto_now=True)

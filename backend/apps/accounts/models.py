@@ -4,6 +4,7 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 # Create your models here.
 
 
+
 class UserManager(BaseUserManager):
     def create_user(self, email, password):
         if not email:
@@ -66,7 +67,7 @@ class Employee(models.Model):
     )
     full_name = models.CharField("Ф.И.О", max_length=255, )
     photo = models.ImageField("Фото сотрудника", upload_to="employees_photos", null=True, blank=True)
-    work_status = models.CharField("Статус сотрудника", max_length=10)
+    work_status = models.CharField("Статус сотрудника", max_length=10, choices=WORK_STATUS_CHOICES)
     age = models.PositiveSmallIntegerField("Возраст", null=True, blank=True)
     company = models.ForeignKey(
         CompanyUser,
@@ -75,6 +76,7 @@ class Employee(models.Model):
         on_delete=models.SET_NULL,
         null=True,
     )
+    phone_number = models.CharField("Номер телефона", max_length=10, blank=True, null=True)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
 
@@ -85,3 +87,19 @@ class Employee(models.Model):
 
     def __str__(self):
         return f'{self.full_name}'
+
+
+class EventCalendar(models.Model):
+    employee = models.ForeignKey(
+        Employee,
+        verbose_name="Сотрудник",
+        on_delete=models.CASCADE,
+        db_index=True
+    )
+    booking = models.ForeignKey('services.Booking', verbose_name="Бронь", on_delete=models.CASCADE)
+    start_time = models.DateTimeField(verbose_name="Время начала брони", db_index=True)
+    end_time = models.DateTimeField(verbose_name="Время конца брони", db_index=True)
+
+    class Meta:
+        verbose_name = "Бронь сотрудника"
+        verbose_name_plural = "Брони сотрудника"
