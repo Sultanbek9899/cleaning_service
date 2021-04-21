@@ -12,7 +12,7 @@ class LocalitySerializer(serializers.ModelSerializer):
         depth = 2
 
 
-class BookingSerializer(serializers.ModelSerializer):
+class DetailBookingSerializer(serializers.ModelSerializer):
     locality = LocalitySerializer()
     performer_employee = EmployeeSerializer()
 
