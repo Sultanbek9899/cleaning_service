@@ -21,9 +21,11 @@ Use `docker-compose up --build -d` for pull images and start
 ---
 
 ## How to run local development environment  
+
 Use `git pull origin main` for pull the project.
 Install requirements for the project from file `requirements.txt`.
-Make migrations und load the dump from file dump.json. 
+Make migrations und load the dump from file dump.json.
+
 ---
 
 ### Environment variables
