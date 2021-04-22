@@ -16,10 +16,14 @@ from rest_framework.response import Response
 
 from backend.apps.accounts.serializers import CompanyUserDetailSerializer
 from backend.apps.accounts.models import CompanyUser, Employee
-from .models import Locality, Booking
+from .models import Locality, Booking, Region, District
 from .serializers import (
     CreateBookingSerializer,
-    LocalitySerializer, BookingTokenSerializer, DetailBookingSerializer
+    LocalitySerializer,
+    BookingTokenSerializer,
+    DetailBookingSerializer,
+    DistrictSerializer,
+    RegionSerializer,
 )
 
 from rest_framework.views import APIView
@@ -72,13 +76,17 @@ class LocalityListView(generics.ListAPIView):
 
 
 class DistrictListView(generics.ListAPIView):
-    serializer_class = LocalitySerializer
+    serializer_class = DistrictSerializer
 
     def get_queryset(self):
-        if self.kwargs.get("district_id", None):
-            queryset = Locality.objects.filter(district_id=self.kwargs.get("district_id"))
-            return queryset
-        return Locality.objects.all()
+        if self.kwargs.get("region_id", None):
+            queryset = District.objects.filter(reqion_id=self.kwargs.get("region_id"))
+        return District.objects.all()
+
+
+class RegionListView(generics.ListAPIView):
+    serializer_class = RegionSerializer
+    queryset = Region.objects.all()
 
 
 
@@ -99,21 +107,35 @@ class SelectCompanyView(APIView):
                         .exclude(booking__eventcalendar__start_time__lte=booking_instance.time,
                                  booking__eventcalendar__end_time__gte=booking_instance.time, )
                     employee = employees.first()
-                    print(employee)
-                    booking_instance.performer_employee = employee
-                    booking_instance.save()
-                    booking_serializer = DetailBookingSerializer(instance=booking_instance)
-                    return Response(
-                        data=booking_serializer.data,
-                        status=status.HTTP_200_OK,
-                    )
-                    # else:
-                    #     return Response(status=status.HTTP_404_NOT_FOUND, data={
-                    #         'message': "У данной компании нету свободных сотрудников"})
+                    if employee:
+                        booking_instance.performer_employee = employee
+                        booking_instance.save()
+                        booking_serializer = DetailBookingSerializer(instance=booking_instance)
+                        return Response(
+                            data=booking_serializer.data,
+                            status=status.HTTP_200_OK,
+                        )
+                    else:
+                        return Response(status=status.HTTP_404_NOT_FOUND, data={
+                            'message': "У данной компании нету свободных сотрудников"})
                 except exceptions.NotFound:
                     return Response(status=status.HTTP_404_NOT_FOUND, data={'message': "Бронь не найдена. Пожалуйста убедитесь в том , что вы создали вашу бронь"})
             raise serializers.ValidationError("Уникальный токен не найден. Возможно уникальный токен устарел. Попробуйте ещё раз")
 
+
+#for update booking token
+class BookingTokenRefreshView(APIView):
+
+    def get(self, request):
+        booking_id = self.kwargs.get('booking_id')
+        salt = uuid.uuid4().hex
+        token = hashlib.sha256(salt.encode('utf-8')).hexdigest()
+        cache.set(f"{booking_id}", token, timeout=60)
+        data = {
+            "booking_id": booking_id,
+            "booking_token": token
+        }
+        return Response(data=data, )
 
 
 

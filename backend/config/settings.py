@@ -32,7 +32,7 @@ SECRET_KEY = config(
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = config("DEBUG", default=True, cast=bool)
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'http://localhost:3000']
 
 
 # Application definition
@@ -61,7 +61,7 @@ INSTALLED_APPS = [
 
     'huey.contrib.djhuey',
 
-
+    #apps
     "backend.apps.services",
     "backend.apps.accounts",
     "backend.apps.api",
@@ -109,7 +109,7 @@ REST_AUTH_REGISTER_SERIALIZERS = {
     'REGISTER_SERIALIZER': 'backend.apps.accounts.serializers.UserRegisterSerializer'
 }
 REST_AUTH_SERIALIZERS = {
-    'USER_DETAILS_SERIALIZER': 'backend.apps.accounts.serializers.UserRegisterSerializer',
+    'USER_DETAILS_SERIALIZER': 'backend.apps.accounts.serializers.CompanyUserDetailSerializer',
     # 'LOGIN_SERIALIZER': 'path.to.custom.LoginSerializer',
 }
 ACCOUNT_ADAPTER = 'backend.apps.accounts.adapter.CustomAccountAdapter'
@@ -123,7 +123,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
         'NAME': config('POSTGRES_DB', default="cleaning", cast=str),
         'PASSWORD': config('POSTGRES_PASSWORD', default="cleaning123", cast=str),
-            'USER': config('POSTGRES_USER', default="cleaning_user", cast=str),
+        'USER': config('POSTGRES_USER', default="cleaning_user", cast=str),
         'HOST': config('POSTGRES_HOST', default="127.0.0.1", cast=str),
         'PORT': config('POSTGRES_PORT', default=5432, cast=int),
     }
@@ -168,7 +168,7 @@ REST_FRAMEWORK = {
     ],
     'DEFAULT_AUTHENTICATION_CLASSES': [
         # 'rest_framework.authentication.SessionAuthentication',
-        'rest_framework.authentication.TokenAuthentication',
+        # 'rest_framework.authentication.TokenAuthentication',
         'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
     ],
 }
@@ -194,6 +194,7 @@ ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_UNIQUE_EMAIL = True
 ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
 ACCOUNT_CONFIRM_EMAIL_ON_GET = True
+ACCOUNT_USER_MODEL_USERNAME_FIELD = None
 
 EMAIL_USE_TLS = True
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'

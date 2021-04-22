@@ -72,6 +72,19 @@ class CompanyUserDetailSerializer(serializers.ModelSerializer):
 
 
 class EmployeeSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Employee
         fields = '__all__'
+
+
+class CreateEmployeeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Employee
+        exclude = [
+            "created",
+            "updated",
+            "company",
+            "work_status"
+        ]
+

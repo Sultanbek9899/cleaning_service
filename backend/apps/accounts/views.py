@@ -1,6 +1,7 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from rest_framework import generics, permissions, mixins, authentication, status
+
 # Create your views here.
 from rest_framework.response import Response
 from rest_framework.views import APIView
@@ -8,7 +9,7 @@ from rest_framework.exceptions import NotFound
 
 from backend.apps.services.models import Locality
 from .models import CompanyUser
-from .serializers import CompanyUserDetailSerializer
+from .serializers import CompanyUserDetailSerializer, CreateEmployeeSerializer
 from backend.apps.services.serializers import DetailBookingSerializer
 from backend.apps.services.models import Booking
 
@@ -55,3 +56,13 @@ class CompanyCalendarView(generics.ListAPIView):
         company = self.request.user
         queryset = Booking.objects.filter(company=company).order_by("-time")
         return queryset
+
+
+class CreateEmployeeView(generics.CreateAPIView):
+    serializer_class = CreateEmployeeSerializer
+    permission_classes = [permissions.IsAuthenticated]
+    authentication_classes = [authentication.TokenAuthentication]
+
+    def perform_create(self, serializer):
+        serializer.company = self.request.user
+        serializer.save()

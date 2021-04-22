@@ -3,8 +3,6 @@ from django.contrib.auth.models import AbstractUser, BaseUserManager
 
 # Create your models here.
 
-
-
 class UserManager(BaseUserManager):
     def create_user(self, email, password):
         if not email:
@@ -25,6 +23,7 @@ class UserManager(BaseUserManager):
 
 
 class CompanyUser(AbstractUser):
+    username = None
     email = models.EmailField("Email", unique=True)
     company_name = models.CharField("Название", max_length=255, db_index=True)
     logo = models.ImageField(verbose_name="Лого", upload_to='company_logo/', null=True, blank=True)

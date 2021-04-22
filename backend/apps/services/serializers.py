@@ -1,8 +1,22 @@
 from rest_framework import serializers
 
 from backend.apps.accounts.serializers import EmployeeSerializer
-from .models import Booking, Locality
+from .models import Booking, Locality, District, Region
 
+
+class RegionSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Region
+        fields = "__all__"
+
+
+class DistrictSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = District
+        fields = "__all__"
+        depth = 1
 
 class LocalitySerializer(serializers.ModelSerializer):
 
